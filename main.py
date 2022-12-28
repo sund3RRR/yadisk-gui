@@ -61,7 +61,7 @@ class WelcomeWindow(QMainWindow):
 
     def is_yadisk_installed(self):
         try:
-            yadisk_exec = subprocess.run(["yandex-disk]"])           
+            yadisk_exec = subprocess.run(["yandex-disk"])           
             return True
         except:
             return False
