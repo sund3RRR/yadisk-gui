@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
+    <width>518</width>
     <height>469</height>
    </rect>
   </property>
@@ -106,7 +106,7 @@
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+       <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
         <widget class="QPushButton" name="further_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -141,8 +141,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>512</width>
-     <height>31</height>
+     <width>518</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
