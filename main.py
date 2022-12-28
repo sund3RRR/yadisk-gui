@@ -38,9 +38,8 @@ class SettingWindow(QStackedWidget):
         # Hide the main window and send it to the system tray
         event.ignore()
         self.hide()
-        self.trayIcon.showMessage("Application minimized to tray",
-                                   "The application has been minimized to the system tray. \
-                                   Click the tray icon to restore the application.", msecs=2)
+        self.trayIcon.showMessage("Яндекс.Диск работает!",
+                                    "Приложение было свёрнуто в системный трей.", msecs=3000)
             
 
 
