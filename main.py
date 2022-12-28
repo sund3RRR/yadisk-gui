@@ -39,7 +39,8 @@ class SettingWindow(QStackedWidget):
         event.ignore()
         self.hide()
         self.trayIcon.showMessage("Application minimized to tray",
-                                   "The application has been minimized to the system tray. Click the tray icon to restore the application.")
+                                   "The application has been minimized to the system tray. \
+                                   Click the tray icon to restore the application.", msecs=2)
             
 
 
