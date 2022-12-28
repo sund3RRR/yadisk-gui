@@ -1,4 +1,4 @@
-import sys
+import sys, subprocess
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -50,9 +50,21 @@ class WelcomeWindow(QMainWindow):
         self.ui.setupUi(self)
         self.mainWindow = mainWindow
         self.ui.further_button.clicked.connect(self.next_stage)
+
+        self.need_to_install_yadisk = self.is_yadisk_installed()
     
     def next_stage(self):
-        self.mainWindow.setCurrentIndex(1)
+        if self.need_to_install_yadisk:
+            self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
+        else:
+            self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 2)
+
+    def is_yadisk_installed(self):
+        yadisk_version = str(subprocess.Popen("yandex-disk -v", shell=True, stdout=subprocess.PIPE).stdout.read())
+        if "command not found" in yadisk_version:
+            return False
+        else:
+            return True
 
 
 class InstallWindow(QMainWindow):
@@ -63,9 +75,14 @@ class InstallWindow(QMainWindow):
         self.mainWindow = mainWindow
 
         self.ui.further_button.clicked.connect(self.next_stage)
+        self.ui.install_button.clicked.connect(self.install_yadisk)
     
     def next_stage(self):
-        self.mainWindow.setCurrentIndex(2)
+        self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
+
+    def install_yadisk(self):
+        pass
+
 
 
 class SetupWindow_1(QMainWindow):
@@ -78,7 +95,7 @@ class SetupWindow_1(QMainWindow):
         self.ui.further_button.clicked.connect(self.next_stage)
     
     def next_stage(self):
-        self.mainWindow.setCurrentIndex(3)
+        self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
 
 
 class SetupWindow_2(QMainWindow):
