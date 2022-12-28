@@ -51,7 +51,7 @@ class WelcomeWindow(QMainWindow):
         self.mainWindow = mainWindow
         self.ui.further_button.clicked.connect(self.next_stage)
 
-        self.need_to_install_yadisk = self.is_yadisk_installed()
+        self.need_to_install_yadisk = not self.is_yadisk_installed()
     
     def next_stage(self):
         if self.need_to_install_yadisk:
