@@ -60,11 +60,11 @@ class WelcomeWindow(QMainWindow):
             self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 2)
 
     def is_yadisk_installed(self):
-        yadisk_version = str(subprocess.Popen("yandex-disk -v", shell=True, stdout=subprocess.PIPE).stdout.read())
-        if "command not found" in yadisk_version:
-            return False
-        else:
+        try:
+            yadisk_exec = subprocess.run(["yandex-disk]"])           
             return True
+        except:
+            return False
 
 
 class InstallWindow(QMainWindow):
