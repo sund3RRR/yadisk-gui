@@ -50,7 +50,6 @@ class WelcomeWindow(QMainWindow):
         self.ui.setupUi(self)
         self.mainWindow = mainWindow
         self.ui.further_button.clicked.connect(self.next_stage)
-
         self.need_to_install_yadisk = not self.is_yadisk_installed()
     
     def next_stage(self):
@@ -61,7 +60,7 @@ class WelcomeWindow(QMainWindow):
 
     def is_yadisk_installed(self):
         try:
-            yadisk_exec = subprocess.run(["yandex-disk"])           
+            subprocess.run(["yandex-disk"])         
             return True
         except:
             return False
@@ -81,7 +80,8 @@ class InstallWindow(QMainWindow):
         self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
 
     def install_yadisk(self):
-        pass
+        install_info = subprocess.run(["sh", "scripts/install_yd.sh"]).stdout
+        print(install_info)
 
 
 
