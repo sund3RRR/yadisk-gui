@@ -82,7 +82,7 @@ class InstallWindow(QMainWindow):
         self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
 
     def install_yadisk(self):
-        subprocess.run(["sh", "scripts/install_yd.sh"]).stdout
+        subprocess.run(["bash", "scripts/install_yd.sh"]).stdout
 
         is_installation_success = is_yadisk_installed()
         if is_installation_success:
