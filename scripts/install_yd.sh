@@ -6,7 +6,7 @@ if [[ $(which rpm) == "/usr/bin/rpm" ]]; then
     pkexec sh -c "rpm -i $PWD/temp/yandex-disk-latest.x86_64.rpm"
 elif [[ $(which apt) == "/usr/bin/apt" ]]; then
     wget http://repo.yandex.ru/yandex-disk/yandex-disk_latest_amd64.deb -P $PWD/temp
-    pkexec sh -c "dpkg -i $PWD/temp/yandex-disk-latest_amd64.deb"
+    pkexec sh -c "dpkg -i $PWD/temp/yandex-disk_latest_amd64.deb"
 fi
 
 rm -rf temp/
