@@ -54,10 +54,9 @@ class Ui_MainWindow(object):
         self.install_button.setMaximumSize(QtCore.QSize(150, 40))
         self.install_button.setObjectName("install_button")
         self.verticalLayout_2.addWidget(self.install_button, 0, QtCore.Qt.AlignmentFlag.AlignHCenter|QtCore.Qt.AlignmentFlag.AlignVCenter)
-        self.installation_progress_bar = QtWidgets.QProgressBar(self.frame)
-        self.installation_progress_bar.setProperty("value", 24)
-        self.installation_progress_bar.setObjectName("installation_progress_bar")
-        self.verticalLayout_2.addWidget(self.installation_progress_bar)
+        self.install_status_label = QtWidgets.QLabel(self.frame)
+        self.install_status_label.setObjectName("install_status_label")
+        self.verticalLayout_2.addWidget(self.install_status_label)
         self.further_button = QtWidgets.QPushButton(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -87,6 +86,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Похоже, что у вас не установлен Яндекс.Диск</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Установить с https://yandex.ru/support/disk-desktop-linux/installation.html ?</p></body></html>"))
         self.install_button.setText(_translate("MainWindow", "Установить"))
+        self.install_status_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><br/></p></body></html>"))
         self.further_button.setText(_translate("MainWindow", "Далее"))
 
 

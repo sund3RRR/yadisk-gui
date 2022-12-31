@@ -100,9 +100,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QProgressBar" name="installation_progress_bar">
-         <property name="value">
-          <number>24</number>
+        <widget class="QLabel" name="install_status_label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>

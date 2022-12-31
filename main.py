@@ -8,6 +8,12 @@ from form.install_form import Ui_MainWindow as InstallForm
 from form.setup_1_form import Ui_MainWindow as SetupForm_1
 from form.setup_2_form import Ui_MainWindow as SetupForm_2
 
+def is_yadisk_installed():
+    try:
+        subprocess.run(["yandex-disk"])         
+        return True
+    except:
+        return False
 
 class SettingWindow(QStackedWidget):
     def __init__(self):
@@ -50,7 +56,7 @@ class WelcomeWindow(QMainWindow):
         self.ui.setupUi(self)
         self.mainWindow = mainWindow
         self.ui.further_button.clicked.connect(self.next_stage)
-        self.need_to_install_yadisk = not self.is_yadisk_installed()
+        self.need_to_install_yadisk = not is_yadisk_installed()
     
     def next_stage(self):
         if self.need_to_install_yadisk:
@@ -58,12 +64,7 @@ class WelcomeWindow(QMainWindow):
         else:
             self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 2)
 
-    def is_yadisk_installed(self):
-        try:
-            subprocess.run(["yandex-disk"])         
-            return True
-        except:
-            return False
+    
 
 
 class InstallWindow(QMainWindow):
@@ -73,6 +74,7 @@ class InstallWindow(QMainWindow):
         self.ui.setupUi(self)
         self.mainWindow = mainWindow
 
+        self.ui.further_button.setDisabled(True)
         self.ui.further_button.clicked.connect(self.next_stage)
         self.ui.install_button.clicked.connect(self.install_yadisk)
     
@@ -80,8 +82,16 @@ class InstallWindow(QMainWindow):
         self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
 
     def install_yadisk(self):
-        install_info = subprocess.run(["sh", "scripts/install_yd.sh"]).stdout
-        print(install_info)
+        subprocess.run(["sh", "scripts/install_yd.sh"]).stdout
+
+        is_installation_success = is_yadisk_installed()
+        if is_installation_success:
+            self.ui.install_status_label.setText("Установка прошла успешно!")
+            self.ui.further_button.setEnabled(True)
+        else:
+            self.ui.install_status_label.setText("Возникла ошибка")
+        
+        self.ui.install_status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
 
 
