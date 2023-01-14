@@ -1,6 +1,6 @@
 import subprocess, time
 
-yd = subprocess.Popen(["yandex-disk"],
+yd = subprocess.Popen(["yandex-disk", "token"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -9,4 +9,3 @@ yd = subprocess.Popen(["yandex-disk"],
 
 for line in yd.stdout:
     print(line.strip())
-
