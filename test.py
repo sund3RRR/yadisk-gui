@@ -2,4 +2,4 @@ import webbrowser
 
 default_browser = webbrowser.get()
 
-print(default_browser.basename)
+print(default_browser.name)
