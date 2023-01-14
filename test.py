@@ -1,5 +1,14 @@
-import webbrowser
+import subprocess, time
 
-default_browser = webbrowser.get()
+yd = subprocess.Popen(["yandex-disk", "token"],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                bufsize=0,
+                universal_newlines=True)
 
-print(default_browser.name)
+while yd.poll() == None:
+    print(yd.stdout)
+    time.sleep(0.5)
+
+print(yd.poll())
