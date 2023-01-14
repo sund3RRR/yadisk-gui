@@ -5,9 +5,9 @@ yd = subprocess.Popen(["yandex-disk", "token"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True)
-
+stdout = yd.communicate()
 while yd.poll() == None:
-    print(yd.stdout.readlines())
+    print(stdout)
     time.sleep(0.5)
 
 print(yd.poll())
