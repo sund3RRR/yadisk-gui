@@ -1,4 +1,4 @@
-import sys, subprocess
+import sys, subprocess, asyncio, pyperclip, time
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -14,6 +14,42 @@ def is_yadisk_installed():
         return True
     except:
         return False
+
+class YandexDiskThread(QObject):
+    finished = pyqtSignal()
+    def __init__(self, status_label):
+        QThread.__init__(self)
+     
+        self.status_label = status_label
+
+    def run_yandex_disk(self) -> None:
+        self.yd_process = subprocess.Popen(
+            ["yandex-disk", "token"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        self.status_label.setText("Обрабатывается...")
+        while self.yd_process.poll() == None:
+            time.sleep(1)
+        self.status_label.setText("Готово")
+        self.finished.emit()
+
+    def get_code(self):
+        while True:
+            try:
+                print(self.yd_process)
+                output = self.yd_process.stdout.read(150).decode("UTF-8")       
+                words = output.split(" ")
+                for word in words:
+                    if "‘" == word[0] and "’" == word[-1]:
+                        code = word[1:-1]
+                
+                return code
+            except:
+                time.sleep(0.1)
+        
+
 
 class SettingWindow(QStackedWidget):
     def __init__(self):
@@ -46,7 +82,6 @@ class SettingWindow(QStackedWidget):
         self.hide()
         self.trayIcon.showMessage("Яндекс.Диск работает!",
                                     "Приложение было свёрнуто в системный трей.", msecs=3000)
-            
 
 
 class WelcomeWindow(QMainWindow):
@@ -63,8 +98,6 @@ class WelcomeWindow(QMainWindow):
             self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
         else:
             self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 2)
-
-    
 
 
 class InstallWindow(QMainWindow):
@@ -101,9 +134,38 @@ class SetupWindow_1(QMainWindow):
         self.ui = SetupForm_1()
         self.ui.setupUi(self)
         self.mainWindow = mainWindow
+        
+        self.yd_link = "https://ya.ru/device"
+        
+        #self.ui.further_button.setDisabled(True)
 
+        self.ui.auth_button.clicked.connect(self.authorize)
+        self.ui.get_code_button.clicked.connect(self.get_code)
+        self.ui.copy_button.clicked.connect(lambda: pyperclip.copy(self.ui.code_output.text()))
+        self.ui.grant_access_button.clicked.connect(self.grant_access)
         self.ui.further_button.clicked.connect(self.next_stage)
-    
+
+    def get_code(self):
+        self.thread = QThread(self)
+        self.yd_worker = YandexDiskThread(self.ui.auth_status)
+        self.yd_worker.moveToThread(self.thread)
+
+        self.thread.started.connect(self.yd_worker.run_yandex_disk)
+        self.yd_worker.finished.connect(self.thread.quit)
+        self.thread.finished.connect(lambda: self.ui.further_button.setEnabled(True))
+        self.thread.start()
+
+        self.ui.code_output.setText(self.yd_worker.get_code())
+
+
+    def grant_access(self):
+        subprocess.run(["xdg-open", self.yd_link])
+
+
+    def authorize(self):
+        subprocess.run(["xdg-open", "https://passport.yandex.ru/auth/welcome"])
+ 
+
     def next_stage(self):
         self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
 
@@ -115,9 +177,60 @@ class SetupWindow_2(QMainWindow):
         self.ui.setupUi(self)
         self.mainWindow = mainWindow
 
+        self.ui.dir_select_button.clicked.connect(self.select_dir)
+        self.ui.add_folder_button.clicked.connect(self.add_folder_input)
+        self.ui.remove_folder_button.clicked.connect(self.remove_folder_input)
         self.ui.finish_button.clicked.connect(self.finish)
     
+    def select_dir(self):
+        self.dir_path = QFileDialog.getExistingDirectory(self, 'Выберите папку')
+        self.ui.dir_label.setText(self.dir_path)
+    
+    def add_folder_input(self):
+        new_folder_item = QLabel()
+        new_folder_item.setPixmap(self.ui.folder_icon.pixmap())
+        new_folder_item.setScaledContents(True)
+        new_folder_item.setMinimumSize(30, 30)
+        new_folder_item.setMaximumSize(30, 30)
+
+        new_folder_input = QLineEdit(self.ui.folder_input) 
+        row = self.ui.add_folder_layout.count() // 2
+        self.ui.add_folder_layout.addWidget(new_folder_item, row, 0)
+        self.ui.add_folder_layout.addWidget(new_folder_input, row, 1)
+
+        self.ui.frame.setMinimumHeight(self.ui.frame.maximumHeight() + 30)
+        self.ui.frame.setMaximumHeight(self.ui.frame.maximumHeight() + 30)
+        self.mainWindow.resize(self.mainWindow.width(), self.mainWindow.height() + 30)
+
+
+    def remove_folder_input(self):
+        row = self.ui.add_folder_layout.count() // 2
+        if row > 0:
+            remove_icon = self.ui.add_folder_layout.itemAtPosition(row-1, 0)
+            remove_input = self.ui.add_folder_layout.itemAtPosition(row-1, 1)
+            remove_icon.widget().setParent(None)
+            remove_input.widget().setParent(None)
+            self.ui.frame.setMinimumHeight(self.ui.frame.maximumHeight() - 30)
+            self.ui.frame.setMaximumHeight(self.ui.frame.maximumHeight() - 30)
+            self.mainWindow.resize(self.mainWindow.width(), self.mainWindow.height() - 30)
+ 
+
     def finish(self):
+        yd_directory = self.ui.dir_label.text()
+        yd_exclude_dirs = []
+
+        row_count = self.ui.add_folder_layout.count() // 2
+        for i in range(0, row_count):
+            yd_exclude_dirs.append(self.ui.add_folder_layout.itemAtPosition(i, 1).widget().text())
+
+        exclude_dirs_str = ",".join(yd_exclude_dirs)
+        yd_process = subprocess.Popen(
+            ["yandex-disk", "start", f"--dir={yd_directory}", f"--exclude-dirs={exclude_dirs_str}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        while yd_process.poll() == None:
+            time.sleep(0.5)
         self.mainWindow.close()
 
 

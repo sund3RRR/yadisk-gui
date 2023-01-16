@@ -91,6 +91,25 @@
          </property>
         </widget>
        </item>
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QPushButton" name="get_code_button">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Получить код</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
@@ -161,7 +180,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="auth_status_button">
+          <widget class="QLabel" name="auth_status">
            <property name="text">
             <string>Ожидает доступ</string>
            </property>

@@ -1,11 +1,20 @@
-import subprocess, time
+import subprocess
 
 yd = subprocess.Popen(["yandex-disk", "token"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                universal_newlines=True,
                 bufsize=0)
 
-for line in yd.stdout:
-    print(line.strip())
+
+output = yd.stdout.read(150).decode("UTF-8")
+print(output)
+words = output.split(" ")
+
+for word in words:
+    if "https://" in word:
+        link  = word
+    if "‘" == word[0] and "’" == word[-1]:
+        code = word[1:-2]
+
+print(link, code)

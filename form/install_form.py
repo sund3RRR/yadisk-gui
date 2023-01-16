@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.label_2)
         self.label_3 = QtWidgets.QLabel(self.frame)
         self.label_3.setWordWrap(True)
+        self.label_3.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse|QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard|QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
         self.label_3.setObjectName("label_3")
         self.verticalLayout_2.addWidget(self.label_3)
         self.install_button = QtWidgets.QPushButton(self.frame)
@@ -83,7 +84,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Похоже, что у вас не установлен Яндекс.Диск</p></body></html>"))
+        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Похоже, что у Вас не установлен Яндекс.Диск</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Установить с https://yandex.ru/support/disk-desktop-linux/installation.html ?</p></body></html>"))
         self.install_button.setText(_translate("MainWindow", "Установить"))
         self.install_status_label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><br/></p></body></html>"))
