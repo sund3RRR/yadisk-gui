@@ -8,6 +8,7 @@ from form.install_form import Ui_MainWindow as InstallForm
 from form.setup_1_form import Ui_MainWindow as SetupForm_1
 from form.setup_2_form import Ui_MainWindow as SetupForm_2
 
+
 def is_yadisk_installed():
     try:
         subprocess.run(["yandex-disk"])         
@@ -15,41 +16,18 @@ def is_yadisk_installed():
     except:
         return False
 
+
 class YandexDiskThread(QObject):
     finished = pyqtSignal()
-    def __init__(self, status_label):
+    def __init__(self, yd_process):
         QThread.__init__(self)
-     
-        self.status_label = status_label
+        self.yd_process = yd_process
 
     def run_yandex_disk(self) -> None:
-        self.yd_process = subprocess.Popen(
-            ["yandex-disk", "token"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-
-        self.status_label.setText("Обрабатывается...")
         while self.yd_process.poll() == None:
             time.sleep(1)
-        self.status_label.setText("Готово")
         self.finished.emit()
-
-    def get_code(self):
-        while True:
-            try:
-                print(self.yd_process)
-                output = self.yd_process.stdout.read(150).decode("UTF-8")       
-                words = output.split(" ")
-                for word in words:
-                    if "‘" == word[0] and "’" == word[-1]:
-                        code = word[1:-1]
-                
-                return code
-            except:
-                time.sleep(0.1)
         
-
 
 class SettingWindow(QStackedWidget):
     def __init__(self):
@@ -146,8 +124,23 @@ class SetupWindow_1(QMainWindow):
         self.ui.further_button.clicked.connect(self.next_stage)
 
     def get_code(self):
+        yd_process = subprocess.Popen(
+            ["yandex-disk", "token"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        output = yd_process.stdout.read(150).decode("UTF-8")       
+        words = output.split(" ")
+        for word in words:
+            if "‘" == word[0] and "’" == word[-1]:
+                code = word[1:-1]
+
+        self.ui.code_output.setText(code)
+        self.ui.auth_status.setText("Обрабатывается...")
+
         self.thread = QThread(self)
-        self.yd_worker = YandexDiskThread(self.ui.auth_status)
+        self.yd_worker = YandexDiskThread(yd_process)
         self.yd_worker.moveToThread(self.thread)
 
         self.thread.started.connect(self.yd_worker.run_yandex_disk)
@@ -155,16 +148,11 @@ class SetupWindow_1(QMainWindow):
         self.thread.finished.connect(lambda: self.ui.further_button.setEnabled(True))
         self.thread.start()
 
-        self.ui.code_output.setText(self.yd_worker.get_code())
-
-
     def grant_access(self):
         subprocess.run(["xdg-open", self.yd_link])
 
-
     def authorize(self):
         subprocess.run(["xdg-open", "https://passport.yandex.ru/auth/welcome"])
- 
 
     def next_stage(self):
         self.mainWindow.setCurrentIndex(self.mainWindow.currentIndex() + 1)
